@@ -8,9 +8,10 @@ is containerised with Docker. **Azure Blob Storage** was added to the API for ev
 
 ## Links
 
-- YouTube demo (unlisted): <PASTE LINK HERE>
+- YouTube demo (unlisted): https://youtu.be/JHSOnPo_xUE
 - Part 1 repository: https://github.com/ST10496771/PROG6212-PART-1
-- Part 2/3 repository: https://github.com/ST10496771/PROG6212-PART-2 (Part 3 is on the `part3-mvc` branch, in the `Part3-MvcApp` folder)
+- Part 2 repository: https://github.com/ST10496771/PROG6212-PART-2
+- Part 3 repository: https://github.com/ST10496771/PROG6212-PART-3
 
 ## CI/CD build
 
