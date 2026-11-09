@@ -1,0 +1,12 @@
+@model string
+@{
+    ViewData["Title"] = "Something went wrong";
+}
+<div class="container">
+    <div class="empty-state">
+        <div class="big">We hit a snag</div>
+        <p class="mt-2">@Model</p>
+        <a class="btn btn-rd" href="javascript:location.reload()">Try again</a>
+        <a class="btn btn-rd-outline" asp-controller="Home" asp-action="Index">Back to events</a>
+    </div>
+</div>

@@ -1,0 +1,141 @@
+@model EventDetailsViewModel
+@{
+    var ev = Model.Event;
+    ViewData["Title"] = ev.EventName;
+    var isParticipant = User.IsInRole("Participant");
+    var upcoming = Fmt.IsUpcoming(ev.EventDate);
+}
+
+<div class="container">
+    <div class="rd-page-header">
+        <a asp-controller="Home" asp-action="Index" class="small text-decoration-none">&larr; All events</a>
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mt-2">
+            <h1>@ev.EventName</h1>
+            <span class="type-badge @Fmt.TypeClass(ev.EventType) fs-6">@ev.EventType</span>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <div class="banner-wrap large mb-4">
+                <div class="event-banner-placeholder @Fmt.TypeClass(ev.EventType)">@ev.EventType</div>
+                <img class="event-banner" src="@Url.Action("EventBanner", "Images", new { id = ev.EventId })" alt="Banner for @ev.EventName" onerror="this.remove()" />
+            </div>
+
+            <div class="rd-card mb-4">
+                <div class="rd-card-body">
+                    <h2 class="h4">About this event</h2>
+                    <p class="mb-0">@(string.IsNullOrWhiteSpace(ev.EventDescription) ? "No description has been added yet." : ev.EventDescription)</p>
+                </div>
+            </div>
+
+            <h2 class="h3">Categories</h2>
+            @if (Model.Categories.Count == 0)
+            {
+                <div class="rd-card"><div class="empty-state"><p class="mb-0">The organiser hasn't added any categories yet.</p></div></div>
+            }
+            else
+            {
+                <div class="rd-table-wrap mb-4">
+                    <table class="table rd-table table-hover">
+                        <thead><tr><th>Category</th><th>Details</th><th class="text-end"></th></tr></thead>
+                        <tbody>
+                        @foreach (var c in Model.Categories)
+                        {
+                            <tr>
+                                <td class="fw-semibold">@c.CategoryName</td>
+                                <td class="text-secondary">@(string.IsNullOrWhiteSpace(c.CategoryDescription) ? "-" : c.CategoryDescription)</td>
+                                <td class="text-end">
+                                    @if (isParticipant && Model.EnrolledCategoryIds.Contains(c.CategoryId))
+                                    {
+                                        <partial name="_StatusBadge" model="@("Confirmed")" />
+                                        <span class="small text-secondary ms-1">You're enrolled</span>
+                                    }
+                                    else if (isParticipant && upcoming)
+                                    {
+                                        <form asp-controller="Participant" asp-action="Enrol" method="post" class="d-inline">
+                                            <input type="hidden" name="categoryId" value="@c.CategoryId" />
+                                            <input type="hidden" name="eventId" value="@ev.EventId" />
+                                            <button type="submit" class="btn btn-rd btn-sm">Enrol</button>
+                                        </form>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
+                </div>
+            }
+
+            @if (Model.Results.Count > 0)
+            {
+                <h2 class="h3">Results</h2>
+                @foreach (var group in Model.Results)
+                {
+                    <h3 class="h5 mt-3">@group.CategoryName</h3>
+                    <div class="rd-table-wrap mb-3">
+                        <table class="table rd-table table-sm">
+                            <thead><tr><th style="width:90px">Pos</th><th>Participant</th><th>Finish time</th></tr></thead>
+                            <tbody>
+                            @foreach (var row in group.Rows)
+                            {
+                                <tr>
+                                    <td class="fw-bold">@Fmt.Ordinal(row.Position)</td>
+                                    <td>@row.Result.ParticipantName</td>
+                                    <td>@Fmt.Time(row.Result.FinishTime)</td>
+                                </tr>
+                            }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+            }
+        </div>
+
+        <div class="col-lg-4">
+            <div class="rd-card">
+                <div class="rd-card-body">
+                    <h2 class="h4">Event details</h2>
+                    <dl class="mb-0">
+                        <dt class="small text-secondary text-uppercase">Date</dt>
+                        <dd>@Fmt.Date(ev.EventDate)</dd>
+                        <dt class="small text-secondary text-uppercase">Location</dt>
+                        <dd>@(string.IsNullOrWhiteSpace(ev.Location) ? "To be announced" : ev.Location)</dd>
+                        <dt class="small text-secondary text-uppercase">Distance</dt>
+                        <dd class="mb-0">@Fmt.Distance(ev.DistanceKm)</dd>
+                    </dl>
+                </div>
+            </div>
+
+            <div class="rd-card mt-3">
+                <div class="rd-card-body">
+                    @if (Model.IsOwner)
+                    {
+                        <p class="small text-secondary">This is your event.</p>
+                        <div class="d-grid gap-2">
+                            <a class="btn btn-rd" asp-controller="Organiser" asp-action="EditEvent" asp-route-id="@ev.EventId">Edit event</a>
+                            <a class="btn btn-rd-outline" asp-controller="Organiser" asp-action="Categories" asp-route-id="@ev.EventId">Manage categories</a>
+                            <a class="btn btn-rd-outline" asp-controller="Organiser" asp-action="Enrolments" asp-route-id="@ev.EventId">View enrolments</a>
+                        </div>
+                    }
+                    else if (isParticipant)
+                    {
+                        <p class="mb-0 small">@(upcoming ? "Choose a category in the table to enrol." : "This event has already taken place.")</p>
+                    }
+                    else if (User.IsInRole("Organiser"))
+                    {
+                        <p class="mb-0 small text-secondary">Organisers can't enrol in events. Log in with a Participant account to enter.</p>
+                    }
+                    else
+                    {
+                        <p class="small">Log in or create a free account to enrol.</p>
+                        <div class="d-grid gap-2">
+                            <a class="btn btn-rd" asp-controller="Account" asp-action="Login" asp-route-returnUrl="@Url.Action("Details", "Events", new { id = ev.EventId })">Log in</a>
+                            <a class="btn btn-rd-outline" asp-controller="Account" asp-action="Register">Register</a>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

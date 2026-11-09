@@ -1,0 +1,51 @@
+# Starts the whole RaceDay system with ONE command (run it from this folder):
+#     docker compose up --build
+#
+# MVC web app  -> http://localhost:8081
+# API Swagger  -> http://localhost:5162/swagger
+#
+# Image storage: by default an Azurite container (a local Azure Blob Storage emulator) is used so the
+# project runs with no cloud account. To use a REAL Azure Storage account instead, set your connection string first:
+#     PowerShell:  $env:AZURE_STORAGE_CONNECTION_STRING = "<your connection string>"
+#     bash:        export AZURE_STORAGE_CONNECTION_STRING="<your connection string>"
+name: raceday
+
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: "RaceDay_Passw0rd!"
+    volumes:
+      - sqldata:/var/opt/mssql
+
+  azurite:
+    image: mcr.microsoft.com/azure-storage/azurite
+    command: azurite-blob --blobHost 0.0.0.0 --skipApiVersionCheck
+    volumes:
+      - blobdata:/data
+
+  api:
+    build: ../RaceDayAPI
+    environment:
+      ConnectionStrings__RaceDayDB: "Server=sqlserver,1433;Database=RaceDayDB;User Id=sa;Password=RaceDay_Passw0rd!;TrustServerCertificate=True"
+      Database__RetryOnStartup: "true"
+      AzureStorage__ConnectionString: "${AZURE_STORAGE_CONNECTION_STRING:-DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://azurite:10000/devstoreaccount1;}"
+    ports:
+      - "5162:8080"
+    depends_on:
+      - sqlserver
+      - azurite
+
+  mvc:
+    build: ./RaceDay.Mvc
+    environment:
+      Api__BaseUrl: "http://api:8080/"
+    ports:
+      - "8081:8080"
+    depends_on:
+      - api
+
+volumes:
+  sqldata:
+  blobdata:

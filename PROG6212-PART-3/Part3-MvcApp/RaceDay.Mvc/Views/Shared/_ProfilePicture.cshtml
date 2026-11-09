@@ -1,0 +1,23 @@
+@model ProfileViewModel
+@{
+    var initials = (Model.FirstName.Length > 0 ? Model.FirstName[..1] : "") + (Model.LastName.Length > 0 ? Model.LastName[..1] : "");
+}
+<div class="rd-card text-center">
+    <div class="rd-card-body p-4">
+        <div class="avatar-wrap">
+            <div class="profile-pic-placeholder">@initials.ToUpperInvariant()</div>
+            <img class="profile-pic" src="@Url.Action("ProfilePicture", "Images", new { v = DateTime.UtcNow.Ticks })" alt="Your profile picture" onerror="this.remove()" />
+        </div>
+
+        <form asp-controller="Account" asp-action="UploadPicture" method="post" enctype="multipart/form-data">
+            <input class="form-control form-control-sm mb-2" type="file" name="picture" accept=".jpg,.jpeg,.png,.gif,.webp,image/*" required />
+            <div class="form-text mb-2">JPG, PNG, GIF or WEBP, up to 5 MB.</div>
+            <button type="submit" class="btn btn-rd btn-sm w-100">Upload picture</button>
+        </form>
+
+        <form asp-controller="Account" asp-action="RemovePicture" method="post" class="mt-2"
+              onsubmit="return confirm('Remove your profile picture?');">
+            <button type="submit" class="btn btn-outline-danger btn-sm w-100">Remove picture</button>
+        </form>
+    </div>
+</div>

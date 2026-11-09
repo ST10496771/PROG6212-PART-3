@@ -1,0 +1,62 @@
+@model EventEntriesViewModel
+@{
+    var ev = Model.Event;
+    ViewData["Title"] = "Results - " + ev.EventName;
+}
+<div class="container">
+    <div class="rd-page-header">
+        <a asp-action="Events" class="small text-decoration-none">&larr; My events</a>
+        <h1 class="mt-2">Capture results</h1>
+        <div class="sub">@ev.EventName &middot; @Fmt.Date(ev.EventDate)</div>
+    </div>
+
+    <div class="alert alert-info">
+        Enter each participant's finish time as <strong>hours:minutes:seconds</strong> (for example 01:45:30).
+        The finishing position is optional - if you leave it empty, positions are shown by finish time within each category.
+        Results appear on the event page as soon as you save them.
+    </div>
+
+    @if (Model.Entries.Count == 0)
+    {
+        <div class="rd-card"><div class="empty-state"><div class="big">Nobody to score yet</div><p class="mb-0">There are no enrolments for this event.</p></div></div>
+    }
+    else
+    {
+        foreach (var group in Model.Entries.GroupBy(e => e.Entry.CategoryName).OrderBy(g => g.Key))
+        {
+            <h2 class="h4 mt-3">@group.Key</h2>
+            <div class="rd-table-wrap mb-3">
+                <div class="table-responsive">
+                    <table class="table rd-table">
+                        <thead><tr><th>Participant</th><th>Status</th><th>Finish time</th><th>Position</th></tr></thead>
+                        <tbody>
+                        @foreach (var e in group.OrderBy(x => x.Result?.FinishPosition ?? int.MaxValue).ThenBy(x => x.Result?.FinishTime ?? TimeSpan.MaxValue).ThenBy(x => x.Entry.ParticipantName))
+                        {
+                            <tr>
+                                <td class="fw-semibold">@e.Entry.ParticipantName</td>
+                                <td><partial name="_StatusBadge" model="e.Status" /></td>
+                                @if (e.Result != null)
+                                {
+                                    <td>@Fmt.Time(e.Result.FinishTime)</td>
+                                    <td class="fw-bold">@(e.Result.FinishPosition.HasValue ? Fmt.Ordinal(e.Result.FinishPosition.Value) : "-")</td>
+                                }
+                                else
+                                {
+                                    <td colspan="2">
+                                        <form asp-action="CaptureResult" asp-route-id="@ev.EventId" method="post" class="d-flex flex-wrap gap-2">
+                                            <input type="hidden" name="entryId" value="@e.Entry.EventEntranceId" />
+                                            <input class="form-control form-control-sm" style="max-width:130px" name="finishTime" placeholder="hh:mm:ss" maxlength="8" required aria-label="Finish time for @e.Entry.ParticipantName" />
+                                            <input class="form-control form-control-sm" style="max-width:100px" name="finishPosition" type="number" min="1" placeholder="Pos." aria-label="Finishing position for @e.Entry.ParticipantName" />
+                                            <button type="submit" class="btn btn-rd btn-sm">Save</button>
+                                        </form>
+                                    </td>
+                                }
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+    }
+</div>

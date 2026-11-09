@@ -1,0 +1,203 @@
+/* RaceDay - sporting theme: deep navy + energetic orange, condensed italic headings */
+:root {
+    --rd-navy: #0b1f3a;
+    --rd-navy-2: #12305c;
+    --rd-orange: #ff5a1f;
+    --rd-orange-dark: #e64a12;
+    --rd-lime: #c6f135;
+    --rd-bg: #f3f5f9;
+    --rd-text: #1b2433;
+    --rd-muted: #6b7686;
+    --rd-border: #dfe4ec;
+}
+
+body {
+    font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+    background: var(--rd-bg);
+    color: var(--rd-text);
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+h1, h2, h3, h4, .rd-heading {
+    font-family: "Barlow Condensed", "Arial Narrow", sans-serif;
+    font-weight: 700;
+    font-style: italic;
+    text-transform: uppercase;
+    letter-spacing: .02em;
+    color: var(--rd-navy);
+}
+
+.rd-main { flex: 1 0 auto; padding-bottom: 3rem; }
+
+/* ---------- navbar ---------- */
+.rd-navbar { background: var(--rd-navy); border-bottom: 4px solid var(--rd-orange); }
+.rd-brand {
+    font-family: "Barlow Condensed", sans-serif;
+    font-weight: 700;
+    font-style: italic;
+    font-size: 1.7rem;
+    letter-spacing: .04em;
+    color: #fff;
+    text-decoration: none;
+}
+.rd-brand span { color: var(--rd-orange); }
+.rd-navbar .nav-link { color: rgba(255,255,255,.8); font-weight: 500; }
+.rd-navbar .nav-link:hover, .rd-navbar .nav-link.active { color: #fff; }
+.rd-navbar .nav-link.active { box-shadow: inset 0 -3px 0 var(--rd-orange); }
+.rd-role-pill {
+    background: var(--rd-lime);
+    color: var(--rd-navy);
+    font-size: .68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    padding: .15rem .5rem;
+    border-radius: 999px;
+    margin-right: .35rem;
+}
+
+/* ---------- buttons ---------- */
+.btn-rd {
+    background: var(--rd-orange);
+    border: 2px solid var(--rd-orange);
+    color: #fff;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+}
+.btn-rd:hover, .btn-rd:focus { background: var(--rd-orange-dark); border-color: var(--rd-orange-dark); color: #fff; }
+.btn-rd-outline { border: 2px solid var(--rd-navy); color: var(--rd-navy); font-weight: 600; background: transparent; }
+.btn-rd-outline:hover { background: var(--rd-navy); color: #fff; }
+
+/* ---------- hero ---------- */
+.rd-hero {
+    background: linear-gradient(120deg, var(--rd-navy) 0%, var(--rd-navy-2) 60%, #1c4a8c 100%);
+    color: #fff;
+    padding: 3rem 0 4.5rem;
+    position: relative;
+    overflow: hidden;
+}
+.rd-hero::after {
+    content: "";
+    position: absolute; right: -60px; top: 0; bottom: 0; width: 260px;
+    background: repeating-linear-gradient(115deg, rgba(255,90,31,.9) 0 18px, transparent 18px 44px);
+    opacity: .25;
+}
+.rd-hero h1 { color: #fff; font-size: clamp(2.2rem, 6vw, 3.8rem); margin-bottom: .4rem; }
+.rd-hero h1 em { color: var(--rd-orange); font-style: italic; }
+.rd-hero p { color: rgba(255,255,255,.8); max-width: 38rem; margin: 0; }
+
+.rd-filter-card {
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 10px 30px rgba(11,31,58,.15);
+    padding: 1.25rem;
+    margin-top: -2.8rem;
+    position: relative;
+    z-index: 2;
+}
+
+/* ---------- page headers ---------- */
+.rd-page-header { padding: 2rem 0 1rem; }
+.rd-page-header h1 { font-size: 2.4rem; margin: 0; }
+.rd-page-header .sub { color: var(--rd-muted); }
+
+/* ---------- cards ---------- */
+.rd-card {
+    background: #fff;
+    border: 1px solid var(--rd-border);
+    border-radius: 14px;
+    box-shadow: 0 2px 8px rgba(11,31,58,.05);
+}
+.rd-card .rd-card-body { padding: 1.25rem; }
+
+.event-card { overflow: hidden; height: 100%; display: flex; flex-direction: column; transition: transform .15s, box-shadow .15s; }
+.event-card:hover { transform: translateY(-3px); box-shadow: 0 10px 24px rgba(11,31,58,.12); }
+.event-banner { width: 100%; height: 160px; object-fit: cover; display: block; }
+.event-banner-placeholder {
+    height: 160px;
+    display: flex; align-items: flex-end;
+    padding: .75rem 1rem;
+    color: rgba(255,255,255,.9);
+    font-family: "Barlow Condensed", sans-serif; font-style: italic; font-weight: 700;
+    font-size: 2.2rem; text-transform: uppercase;
+}
+.event-banner-placeholder.type-run { background: linear-gradient(135deg, #ff5a1f, #b8300a); }
+.event-banner-placeholder.type-walk { background: linear-gradient(135deg, #1fa37a, #0b5c44); }
+.event-banner-placeholder.type-cycle { background: linear-gradient(135deg, #2f6df6, #0b2f7a); }
+.event-banner-large { width: 100%; max-height: 340px; object-fit: cover; border-radius: 14px; }
+.event-banner-placeholder.large { height: 220px; border-radius: 14px; font-size: 3.2rem; }
+
+.event-meta { color: var(--rd-muted); font-size: .9rem; }
+.event-meta strong { color: var(--rd-text); }
+
+/* ---------- badges ---------- */
+.type-badge {
+    display: inline-block; font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em;
+    padding: .2rem .6rem; border-radius: 999px; color: #fff;
+}
+.type-badge.type-run { background: #e64a12; }
+.type-badge.type-walk { background: #1fa37a; }
+.type-badge.type-cycle { background: #2f6df6; }
+
+.status-badge {
+    display: inline-block; font-size: .78rem; font-weight: 700; padding: .25rem .7rem; border-radius: 999px; white-space: nowrap;
+}
+.status-confirmed { background: #d6f5e3; color: #0d6b3a; border: 1px solid #8fdcb1; }   /* green */
+.status-awaiting  { background: #fff0cc; color: #8a5a00; border: 1px solid #f3cf7a; }   /* amber */
+.status-completed { background: #dce8ff; color: #123f8f; border: 1px solid #9db9f0; }   /* blue  */
+.status-other     { background: #e9ecf1; color: #44505f; border: 1px solid #ccd3dd; }
+
+/* ---------- tables ---------- */
+.rd-table { margin: 0; }
+.rd-table thead th {
+    background: var(--rd-navy); color: #fff; font-weight: 600; font-size: .8rem;
+    text-transform: uppercase; letter-spacing: .05em; border: 0; white-space: nowrap;
+}
+.rd-table td { vertical-align: middle; }
+.rd-table-wrap { overflow: hidden; border-radius: 14px; border: 1px solid var(--rd-border); background: #fff; }
+
+/* ---------- stat tiles ---------- */
+.stat-tile { background: #fff; border: 1px solid var(--rd-border); border-left: 6px solid var(--rd-orange); border-radius: 12px; padding: 1rem 1.25rem; height: 100%; }
+.stat-tile .num { font-family: "Barlow Condensed", sans-serif; font-weight: 700; font-style: italic; font-size: 2.6rem; line-height: 1; color: var(--rd-navy); }
+.stat-tile .label { color: var(--rd-muted); font-size: .82rem; text-transform: uppercase; letter-spacing: .05em; font-weight: 600; }
+.stat-tile.alt { border-left-color: var(--rd-lime); }
+.stat-tile.alt2 { border-left-color: var(--rd-navy-2); }
+
+/* ---------- forms ---------- */
+.form-label { font-weight: 600; font-size: .9rem; }
+.form-control:focus, .form-select:focus { border-color: var(--rd-orange); box-shadow: 0 0 0 .2rem rgba(255,90,31,.2); }
+.role-option { border: 2px solid var(--rd-border); border-radius: 12px; padding: .8rem 1rem; cursor: pointer; display: block; height: 100%; background: #fff; }
+.role-option:has(input:checked) { border-color: var(--rd-orange); background: #fff4ee; }
+.profile-pic { width: 140px; height: 140px; object-fit: cover; border-radius: 50%; border: 4px solid var(--rd-orange); }
+.profile-pic-placeholder {
+    width: 140px; height: 140px; border-radius: 50%; background: var(--rd-navy); color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-family: "Barlow Condensed", sans-serif; font-style: italic; font-weight: 700; font-size: 3rem;
+    border: 4px solid var(--rd-orange);
+}
+
+.empty-state { text-align: center; padding: 3rem 1rem; color: var(--rd-muted); }
+.empty-state .big { font-family: "Barlow Condensed", sans-serif; font-style: italic; font-weight: 700; font-size: 1.8rem; color: var(--rd-navy); text-transform: uppercase; }
+
+.auth-card { max-width: 520px; margin: 2.5rem auto; }
+
+/* ---------- footer ---------- */
+.rd-footer { background: var(--rd-navy); color: rgba(255,255,255,.7); padding: 1.25rem 0; font-size: .9rem; flex-shrink: 0; }
+.rd-footer .rd-brand { font-size: 1.2rem; }
+
+/* empty validation summaries must not show as empty alert boxes */
+.validation-summary-valid { display: none; }
+.field-validation-valid { display: none; }
+
+/* ---------- images with a coloured fallback (the image is removed if the event has no banner / user has no picture) ---------- */
+.banner-wrap { position: relative; height: 160px; overflow: hidden; }
+.banner-wrap .event-banner { position: absolute; inset: 0; height: 100%; }
+.banner-wrap .event-banner-placeholder { height: 100%; }
+.banner-wrap.large { height: 260px; border-radius: 14px; }
+.banner-wrap.large .event-banner { border-radius: 14px; }
+.banner-wrap.large .event-banner-placeholder { border-radius: 14px; font-size: 3.2rem; }
+.avatar-wrap { position: relative; width: 140px; height: 140px; margin: 0 auto 1rem; }
+.avatar-wrap .profile-pic { position: absolute; inset: 0; }

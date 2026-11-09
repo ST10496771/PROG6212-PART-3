@@ -1,0 +1,69 @@
+@model List<ParticipantResultRow>
+@{
+    ViewData["Title"] = "My results";
+}
+<div class="container">
+    <div class="rd-page-header">
+        <h1>My results</h1>
+        <div class="sub">Your race history across every completed event.</div>
+    </div>
+
+    @if (Model.Count == 0)
+    {
+        <div class="rd-card">
+            <div class="empty-state">
+                <div class="big">No results yet</div>
+                <p>Once an organiser records your finish time, it will show up here.</p>
+                <a class="btn btn-rd" asp-controller="Participant" asp-action="Entries">View my entries</a>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="row g-3 mb-4">
+            <div class="col-6 col-md-3"><div class="stat-tile"><div class="num">@Model.Count</div><div class="label">Races finished</div></div></div>
+            <div class="col-6 col-md-3">
+                <div class="stat-tile alt">
+                    <div class="num">@(Model.Count(r => r.Position == 1))</div>
+                    <div class="label">Wins</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="rd-table-wrap">
+            <div class="table-responsive">
+                <table class="table rd-table table-hover">
+                    <thead><tr><th>Event</th><th>Date</th><th>Category</th><th>Finish time</th><th>Position</th></tr></thead>
+                    <tbody>
+                    @foreach (var row in Model)
+                    {
+                        <tr>
+                            <td>
+                                @if (row.Entry != null)
+                                {
+                                    <a class="fw-semibold text-decoration-none" asp-controller="Events" asp-action="Details" asp-route-id="@row.Entry.EventId">@row.Result.EventName</a>
+                                }
+                                else
+                                {
+                                    <span class="fw-semibold">@row.Result.EventName</span>
+                                }
+                            </td>
+                            <td>@(row.Entry != null ? Fmt.Date(row.Entry.EventDate) : "-")</td>
+                            <td>@row.Result.CategoryName</td>
+                            <td class="fw-semibold">@Fmt.Time(row.Result.FinishTime)</td>
+                            <td>
+                                @if (row.Position.HasValue)
+                                {
+                                    <span class="fw-bold">@Fmt.Ordinal(row.Position.Value)</span>
+                                    @if (row.TotalFinishers.HasValue) { <span class="text-secondary"> out of @row.TotalFinishers</span> }
+                                }
+                                else { <span class="text-secondary">-</span> }
+                            </td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+</div>

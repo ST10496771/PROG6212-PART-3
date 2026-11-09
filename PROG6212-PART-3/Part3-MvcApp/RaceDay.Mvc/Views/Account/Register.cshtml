@@ -1,0 +1,87 @@
+@model RegisterViewModel
+@{
+    ViewData["Title"] = "Register";
+}
+<div class="container">
+    <div class="auth-card rd-card" style="max-width:640px">
+        <div class="rd-card-body p-4">
+            <h1 class="h2">Join RaceDay</h1>
+            <p class="text-secondary">Create your account and choose how you'll use RaceDay.</p>
+
+            <form asp-action="Register" method="post" novalidate>
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+                <div class="row g-3 mb-3">
+                    <div class="col-sm-6">
+                        <label class="role-option">
+                            <input type="radio" name="Role" value="Participant" class="form-check-input me-2" checked="@(Model.Role == "Participant")" />
+                            <strong>Participant</strong>
+                            <div class="small text-secondary">Enter events and track my results</div>
+                        </label>
+                    </div>
+                    <div class="col-sm-6">
+                        <label class="role-option">
+                            <input type="radio" name="Role" value="Organiser" class="form-check-input me-2" checked="@(Model.Role == "Organiser")" />
+                            <strong>Organiser</strong>
+                            <div class="small text-secondary">Create and manage events</div>
+                        </label>
+                    </div>
+                    <span asp-validation-for="Role" class="text-danger small"></span>
+                </div>
+
+                <div class="row g-3">
+                    <div class="col-sm-6">
+                        <label asp-for="FirstName" class="form-label"></label>
+                        <input asp-for="FirstName" class="form-control" autocomplete="given-name" />
+                        <span asp-validation-for="FirstName" class="text-danger small"></span>
+                    </div>
+                    <div class="col-sm-6">
+                        <label asp-for="LastName" class="form-label"></label>
+                        <input asp-for="LastName" class="form-control" autocomplete="family-name" />
+                        <span asp-validation-for="LastName" class="text-danger small"></span>
+                    </div>
+                    <div class="col-12">
+                        <label asp-for="Email" class="form-label"></label>
+                        <input asp-for="Email" class="form-control" autocomplete="email" />
+                        <span asp-validation-for="Email" class="text-danger small"></span>
+                    </div>
+                    <div class="col-12" id="contactField">
+                        <label asp-for="ContactNumber" class="form-label"></label>
+                        <input asp-for="ContactNumber" class="form-control" autocomplete="tel" />
+                        <span asp-validation-for="ContactNumber" class="text-danger small"></span>
+                    </div>
+                    <div class="col-sm-6">
+                        <label asp-for="Password" class="form-label"></label>
+                        <input asp-for="Password" class="form-control" autocomplete="new-password" />
+                        <span asp-validation-for="Password" class="text-danger small"></span>
+                    </div>
+                    <div class="col-sm-6">
+                        <label asp-for="ConfirmPassword" class="form-label"></label>
+                        <input asp-for="ConfirmPassword" class="form-control" autocomplete="new-password" />
+                        <span asp-validation-for="ConfirmPassword" class="text-danger small"></span>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-rd w-100 mt-4">Create account</button>
+            </form>
+
+            <p class="mt-3 mb-0 small">Already registered? <a asp-action="Login">Log in</a></p>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // The contact number is only needed for organisers.
+        (function () {
+            var field = document.getElementById('contactField');
+            var radios = document.querySelectorAll('input[name="Role"]');
+            function update() {
+                var role = document.querySelector('input[name="Role"]:checked');
+                field.style.display = role && role.value === 'Organiser' ? '' : 'none';
+            }
+            radios.forEach(function (r) { r.addEventListener('change', update); });
+            update();
+        })();
+    </script>
+}

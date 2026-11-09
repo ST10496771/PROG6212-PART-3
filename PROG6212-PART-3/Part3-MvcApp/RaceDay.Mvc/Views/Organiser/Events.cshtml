@@ -1,0 +1,60 @@
+@model List<OrganiserEventRow>
+@{
+    ViewData["Title"] = "My events";
+}
+<div class="container">
+    <div class="rd-page-header d-flex flex-wrap justify-content-between align-items-end gap-2">
+        <div>
+            <h1>My events</h1>
+            <div class="sub">Create, edit and delete your events.</div>
+        </div>
+        <a class="btn btn-rd" asp-action="CreateEvent">+ New event</a>
+    </div>
+
+    @if (Model.Count == 0)
+    {
+        <div class="rd-card">
+            <div class="empty-state">
+                <div class="big">No events yet</div>
+                <p>Create your first event to get started.</p>
+                <a class="btn btn-rd" asp-action="CreateEvent">Create an event</a>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="rd-table-wrap">
+            <div class="table-responsive">
+                <table class="table rd-table table-hover">
+                    <thead>
+                        <tr><th>Event</th><th>Date</th><th>Location</th><th>Distance</th><th>Type</th><th class="text-center">Enrolled</th><th></th></tr>
+                    </thead>
+                    <tbody>
+                    @foreach (var row in Model)
+                    {
+                        var e = row.Event;
+                        <tr>
+                            <td class="fw-semibold">@e.EventName</td>
+                            <td>@Fmt.Date(e.EventDate)</td>
+                            <td>@(string.IsNullOrWhiteSpace(e.Location) ? "-" : e.Location)</td>
+                            <td>@Fmt.Distance(e.DistanceKm)</td>
+                            <td><span class="type-badge @Fmt.TypeClass(e.EventType)">@e.EventType</span></td>
+                            <td class="text-center">@row.EnrolmentCount</td>
+                            <td class="text-end text-nowrap">
+                                <a class="btn btn-rd-outline btn-sm" asp-action="EditEvent" asp-route-id="@e.EventId">Edit</a>
+                                <a class="btn btn-rd-outline btn-sm" asp-action="Categories" asp-route-id="@e.EventId">Categories</a>
+                                <a class="btn btn-rd-outline btn-sm" asp-action="Enrolments" asp-route-id="@e.EventId">Enrolments</a>
+                                <a class="btn btn-rd-outline btn-sm" asp-action="Results" asp-route-id="@e.EventId">Results</a>
+                                <form asp-action="DeleteEvent" asp-route-id="@e.EventId" method="post" class="d-inline"
+                                      onsubmit="return confirm('Delete this event? This also removes its categories, enrolments and results.');">
+                                    <button type="submit" class="btn btn-outline-danger btn-sm">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+</div>

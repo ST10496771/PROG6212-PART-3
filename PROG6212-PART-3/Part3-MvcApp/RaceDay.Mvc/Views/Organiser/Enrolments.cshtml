@@ -1,0 +1,47 @@
+@model EventEntriesViewModel
+@{
+    var ev = Model.Event;
+    ViewData["Title"] = "Enrolments - " + ev.EventName;
+}
+<div class="container">
+    <div class="rd-page-header d-flex flex-wrap justify-content-between align-items-end gap-2">
+        <div>
+            <a asp-action="Events" class="small text-decoration-none">&larr; My events</a>
+            <h1 class="mt-2">Enrolments</h1>
+            <div class="sub">@ev.EventName &middot; @Fmt.Date(ev.EventDate) &middot; @Model.Entries.Count @(Model.Entries.Count == 1 ? "participant" : "participants")</div>
+        </div>
+        <div class="d-flex gap-2">
+            <a class="btn btn-rd-outline" asp-action="Categories" asp-route-id="@ev.EventId">Categories</a>
+            <a class="btn btn-rd" asp-action="Results" asp-route-id="@ev.EventId">Capture results</a>
+        </div>
+    </div>
+
+    @if (Model.Entries.Count == 0)
+    {
+        <div class="rd-card"><div class="empty-state"><div class="big">No enrolments yet</div><p class="mb-0">Participants will appear here as soon as they enter.</p></div></div>
+    }
+    else
+    {
+        foreach (var group in Model.Entries.GroupBy(e => e.Entry.CategoryName).OrderBy(g => g.Key))
+        {
+            <h2 class="h4 mt-3">@group.Key <span class="badge text-bg-secondary align-middle">@group.Count()</span></h2>
+            <div class="rd-table-wrap mb-3">
+                <div class="table-responsive">
+                    <table class="table rd-table table-sm">
+                        <thead><tr><th>Participant</th><th>Enrolled on</th><th>Status</th></tr></thead>
+                        <tbody>
+                        @foreach (var e in group.OrderBy(x => x.Entry.ParticipantName))
+                        {
+                            <tr>
+                                <td class="fw-semibold">@e.Entry.ParticipantName</td>
+                                <td>@e.Entry.EntryDate.ToString("dd MMM yyyy")</td>
+                                <td><partial name="_StatusBadge" model="e.Status" /></td>
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+    }
+</div>

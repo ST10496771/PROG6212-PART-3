@@ -1,0 +1,80 @@
+@model DashboardViewModel
+@{
+    ViewData["Title"] = "Dashboard";
+}
+<div class="container">
+    <div class="rd-page-header d-flex flex-wrap justify-content-between align-items-end gap-2">
+        <div>
+            <h1>Organiser dashboard</h1>
+            <div class="sub">A summary of the events you've created.</div>
+        </div>
+        <a class="btn btn-rd" asp-action="CreateEvent">+ New event</a>
+    </div>
+
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-lg-3"><div class="stat-tile"><div class="num">@Model.TotalEvents</div><div class="label">Events created</div></div></div>
+        <div class="col-6 col-lg-3"><div class="stat-tile alt2"><div class="num">@Model.UpcomingCount</div><div class="label">Upcoming events</div></div></div>
+        <div class="col-6 col-lg-3"><div class="stat-tile alt"><div class="num">@Model.TotalEnrolments</div><div class="label">Total enrolments</div></div></div>
+        <div class="col-6 col-lg-3"><div class="stat-tile"><div class="num">@Model.ResultsCaptured</div><div class="label">Results captured</div></div></div>
+    </div>
+
+    @if (Model.NextEvent is { } next)
+    {
+        <div class="rd-card mb-4">
+            <div class="rd-card-body d-flex flex-wrap justify-content-between align-items-center gap-2">
+                <div>
+                    <div class="small text-secondary text-uppercase fw-semibold">Next event</div>
+                    <div class="h4 mb-0 rd-heading">@next.Event.EventName</div>
+                    <div class="event-meta">@Fmt.Date(next.Event.EventDate)@if (!string.IsNullOrWhiteSpace(next.Event.Location)) { <text> &middot; @next.Event.Location</text> } &middot; @next.EnrolmentCount enrolled</div>
+                </div>
+                <a class="btn btn-rd-outline" asp-action="Enrolments" asp-route-id="@next.Event.EventId">View enrolments</a>
+            </div>
+        </div>
+    }
+
+    <h2 class="h3">Your events</h2>
+    @if (Model.Events.Count == 0)
+    {
+        <div class="rd-card">
+            <div class="empty-state">
+                <div class="big">No events yet</div>
+                <p>Create your first event to start taking enrolments.</p>
+                <a class="btn btn-rd" asp-action="CreateEvent">Create an event</a>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="rd-table-wrap">
+            <div class="table-responsive">
+                <table class="table rd-table table-hover">
+                    <thead>
+                        <tr><th>Event</th><th>Date</th><th>Type</th><th class="text-center">Categories</th><th class="text-center">Enrolments</th><th class="text-center">Results</th><th></th></tr>
+                    </thead>
+                    <tbody>
+                    @foreach (var row in Model.Events)
+                    {
+                        var e = row.Event;
+                        var upcoming = Fmt.IsUpcoming(e.EventDate);
+                        <tr>
+                            <td>
+                                <a class="fw-semibold text-decoration-none" asp-controller="Events" asp-action="Details" asp-route-id="@e.EventId">@e.EventName</a>
+                                @if (!upcoming) { <span class="badge text-bg-secondary ms-1">Past</span> }
+                            </td>
+                            <td>@Fmt.Date(e.EventDate)</td>
+                            <td><span class="type-badge @Fmt.TypeClass(e.EventType)">@e.EventType</span></td>
+                            <td class="text-center">@row.CategoryCount</td>
+                            <td class="text-center fw-bold">@row.EnrolmentCount</td>
+                            <td class="text-center">@row.ResultsCount / @row.EnrolmentCount</td>
+                            <td class="text-end">
+                                <a class="btn btn-rd-outline btn-sm" asp-action="Enrolments" asp-route-id="@e.EventId">Enrolments</a>
+                                <a class="btn btn-rd-outline btn-sm" asp-action="Results" asp-route-id="@e.EventId">Results</a>
+                            </td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+</div>

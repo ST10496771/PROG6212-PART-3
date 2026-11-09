@@ -1,0 +1,41 @@
+@model ProfileViewModel
+@{
+    ViewData["Title"] = "My profile";
+}
+<div class="container">
+    <div class="rd-page-header"><h1>My profile</h1><div class="sub">Update your details and profile picture.</div></div>
+
+    <div class="row g-4">
+        <div class="col-lg-4">
+            <partial name="_ProfilePicture" model="Model" />
+        </div>
+
+        <div class="col-lg-8">
+            <div class="rd-card">
+                <div class="rd-card-body p-4">
+                    <form asp-action="Profile" method="post" novalidate>
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+                        <div class="row g-3">
+                            <div class="col-sm-6">
+                                <label asp-for="FirstName" class="form-label"></label>
+                                <input asp-for="FirstName" class="form-control" />
+                                <span asp-validation-for="FirstName" class="text-danger small"></span>
+                            </div>
+                            <div class="col-sm-6">
+                                <label asp-for="LastName" class="form-label"></label>
+                                <input asp-for="LastName" class="form-control" />
+                                <span asp-validation-for="LastName" class="text-danger small"></span>
+                            </div>
+                            <div class="col-12">
+                                <label asp-for="Email" class="form-label"></label>
+                                <input asp-for="Email" class="form-control" readonly />
+                                <div class="form-text">Your email is your login and can't be changed here.</div>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-rd mt-4">Save changes</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

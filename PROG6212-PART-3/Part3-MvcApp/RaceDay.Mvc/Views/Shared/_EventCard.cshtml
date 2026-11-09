@@ -1,0 +1,26 @@
+@model EventDto
+<div class="rd-card event-card">
+    <div class="banner-wrap">
+        <div class="event-banner-placeholder @Fmt.TypeClass(Model.EventType)">@Model.EventType</div>
+        <img class="event-banner" src="@Url.Action("EventBanner", "Images", new { id = Model.EventId })" alt="Banner for @Model.EventName" loading="lazy" onerror="this.remove()" />
+    </div>
+    <div class="rd-card-body d-flex flex-column flex-grow-1">
+        <div class="d-flex justify-content-between align-items-start gap-2 mb-1">
+            <h3 class="h4 mb-0">@Model.EventName</h3>
+            <span class="type-badge @Fmt.TypeClass(Model.EventType)">@Model.EventType</span>
+        </div>
+        <div class="event-meta mb-2">
+            <div><strong>@Fmt.Date(Model.EventDate)</strong>@if (!string.IsNullOrWhiteSpace(Model.Location)) { <text> &middot; @Model.Location</text> }</div>
+            <div>@Fmt.Distance(Model.DistanceKm)</div>
+        </div>
+        @if (!string.IsNullOrWhiteSpace(Model.EventDescription))
+        {
+            <p class="small text-secondary flex-grow-1">@(Model.EventDescription.Length > 110 ? Model.EventDescription[..110] + "..." : Model.EventDescription)</p>
+        }
+        else
+        {
+            <div class="flex-grow-1"></div>
+        }
+        <a class="btn btn-rd btn-sm align-self-start" asp-controller="Events" asp-action="Details" asp-route-id="@Model.EventId">View details</a>
+    </div>
+</div>

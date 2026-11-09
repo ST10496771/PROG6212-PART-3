@@ -1,0 +1,66 @@
+@model CategoriesViewModel
+@{
+    var ev = Model.Event;
+    ViewData["Title"] = "Categories - " + ev.EventName;
+}
+<div class="container">
+    <div class="rd-page-header">
+        <a asp-action="Events" class="small text-decoration-none">&larr; My events</a>
+        <h1 class="mt-2">Categories</h1>
+        <div class="sub">@ev.EventName &middot; @Fmt.Date(ev.EventDate)</div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-7">
+            @if (Model.Categories.Count == 0)
+            {
+                <div class="rd-card"><div class="empty-state"><div class="big">No categories yet</div><p class="mb-0">Add an age or distance category so participants can enrol.</p></div></div>
+            }
+            else
+            {
+                <div class="rd-table-wrap">
+                    <table class="table rd-table">
+                        <thead><tr><th>Category</th><th>Description</th><th></th></tr></thead>
+                        <tbody>
+                        @foreach (var c in Model.Categories)
+                        {
+                            <tr>
+                                <td class="fw-semibold">@c.CategoryName</td>
+                                <td class="text-secondary">@(string.IsNullOrWhiteSpace(c.CategoryDescription) ? "-" : c.CategoryDescription)</td>
+                                <td class="text-end">
+                                    <form asp-action="DeleteCategory" asp-route-id="@ev.EventId" method="post" class="d-inline"
+                                          onsubmit="return confirm('Remove this category? Any enrolments and results in it will be removed too.');">
+                                        <input type="hidden" name="categoryId" value="@c.CategoryId" />
+                                        <button type="submit" class="btn btn-outline-danger btn-sm">Remove</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+
+        <div class="col-lg-5">
+            <div class="rd-card">
+                <div class="rd-card-body">
+                    <h2 class="h4">Add a category</h2>
+                    <p class="small text-secondary">For example "Under 20", "Senior", "10km" or "21km".</p>
+                    <form asp-action="AddCategory" asp-route-id="@ev.EventId" method="post">
+                        <div class="mb-3">
+                            <label class="form-label" for="categoryName">Category name</label>
+                            <input class="form-control" id="categoryName" name="categoryName" maxlength="100" required />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" for="categoryDescription">Description (optional)</label>
+                            <input class="form-control" id="categoryDescription" name="categoryDescription" maxlength="255" />
+                        </div>
+                        <button type="submit" class="btn btn-rd">Add category</button>
+                    </form>
+                </div>
+            </div>
+            <a class="btn btn-rd-outline mt-3" asp-action="Enrolments" asp-route-id="@ev.EventId">View enrolments</a>
+        </div>
+    </div>
+</div>
